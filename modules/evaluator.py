@@ -52,7 +52,6 @@ def call_openai_and_parse_score(prompt: str) -> float:
     print("⚠️  No se detectó número en:", text)
     return np.nan
 
-
 def evaluate_module_batch(
     df: pd.DataFrame, module_name: str, rubric_text: str, repetitions: int = 1
 ) -> pd.DataFrame:

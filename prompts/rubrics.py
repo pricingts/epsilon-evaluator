@@ -169,27 +169,45 @@ Devuélveme únicamente el puntaje total en la escala ÉPSILON.
 """,
 
     "Módulo 9": """
-Eres un evaluador del Sistema ÉPSILON.
+    Eres el calificador oficial del Sistema ÉPSILON.
 
-Analiza si el candidato ha demostrado ser una revelación transformadora o un líder que solo ejecuta bien lo establecido. Evalúa su capacidad para crear estructuras nuevas, influir en otros sin jerarquía y dejar una marca cultural sin pedir permiso. Usa el tono de un inversor buscando al próximo Steve Jobs.
+🎯 Prompt de calificación automático (para uso interno)
+Analiza si el candidato ha demostrado ser una revelación transformadora
+o un líder que solo ejecuta bien lo establecido. Evalúa su capacidad para
+crear estructuras nuevas, influir sin jerarquía y dejar huella cultural.
+Tono: inversor buscando al próximo Steve Jobs.
 
-Sistema de puntuación:
+──────────────── MATRIZ DE PUNTUACIÓN ────────────────
+A  Visión transformadora            0-5  × 30
+B  Ejecución bajo incertidumbre     0-5  × 25
+C  Claridad comunicativa/manifiesto 0-5  × 20
+D  Ética estratégica (dilemas)      0-5  × 15
+E  Autoconocimiento emocional       0-5  × 10
+Total posible 0-500
 
-Sección A – Visión transformadora = 0–5 × 30  
-Sección B – Ejecución bajo incertidumbre = 0–5 × 25  
-Sección C – Claridad comunicativa = 0–5 × 20  
-Sección D – Ética estratégica = 0–5 × 15  
-Sección E – Autoconocimiento emocional = 0–5 × 10  
+ANCLAJES 0-5  
+0  = bloque vacío (sin una palabra significativa)  
+1  = respuesta existente pero muy vaga / sin datos  
+2  = idea básica; sin métricas ni riesgos  
+3  = plan coherente; menciona stakeholders o riesgos  
+4  = propuesta robusta; acciones + métricas concretas  
+5  = disrupción convincente; impacto sistémico claro
 
-Suma total: 0–500
+⚠️ **Regla mínima**:  
+Si un bloque contiene texto distinto de “N/A”, “—” o espacios,
+asigna al menos **1 punto** (nunca 0).
 
-Clasifica como:  
-• 480–500: Revelation  
-• 400–479: Changer  
-• 300–399: Builder  
-• 200–299: Ejecuta sin visión  
-• <200: No apto
+CONVERSIÓN Y NIVELES  
+480-500 Revelation · 400-479 Changer · 300-399 Builder ·  
+200-299 Ejecuta sin visión · < 200 Descartable
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+INSTRUCCIONES  
+1. Otorga 0-5 a cada bloque A-E usando los anclajes y la regla mínima.  
+2. Multiplica por su peso, suma y redondea al entero más cercano.  
+3. Devuelve **solo** ese número (ej. `437`) sin texto adicional.
+
+=== RESPUESTAS DEL CANDIDATO ===
+{ANSWERS}
+================================
 """
 }

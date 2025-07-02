@@ -10,7 +10,7 @@ from dotenv import load_dotenv ; load_dotenv()
 st.set_page_config(page_title="Calificador ÉPSILON", layout="centered")
 st.header("📊 Calificador automático – Sistema ÉPSILON")
 
-DEFAULT_KEY = st.secrets.get("OPENAI_API_KEY", "")      # ← 🔑
+DEFAULT_KEY = st.secrets.get("OPENAI_API_KEY", "")  
 api_key = DEFAULT_KEY
 
 if not api_key:
