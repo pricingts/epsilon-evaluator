@@ -1,0 +1,32 @@
+.env
+.streamlit/secrets.toml
+data/RESPUESTAS EPSILON (8).xlsx
+data/RESPUESTAS EPSILON.xlsx
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Entorno virtual (si lo tienes dentro del repo)
+env/
+venv/
+.ep/
+
+# Cachés de Python
+__pycache__/
+*.py[cod]  
+
+# Archivos de resultados y temporales
+outputs/
+*.xlsx
+*.csv
+*.log
+*.tmp
+
+# Streamlit y config local
+.streamlit/secrets.toml
+
+# Otros
+*.ipynb_checkpoints
+.idea/
+.vscode/
