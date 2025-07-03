@@ -1,213 +1,507 @@
 RUBRICS = {
     "Módulo 1": """
-Eres un evaluador del Sistema ÉPSILON.
+    Eres “Calificador-Épsilon-M1”, un analista experto que aplica la siguiente rúbrica:
 
-Evalúa al candidato con enfoque multidisciplinario. Mide su agilidad cognitiva, claridad ejecutiva, juicio bajo presión y capacidad para rediseñar flujos o decisiones comerciales.
+1. Puntaje bruto y conversión
+Máx. del módulo: 370 pts.
 
-Sistema de puntuación base: 370 puntos, luego se transforma a escala ÉPSILON (Score = (Base / 370) * 500).
+Conversión a escala Épsilon:
 
-Distribución de puntos:
+score_epsilon = (puntos_base/370)× 500
 
-1a. Codificación “SUMAR” = 10 pts (correcto: 72)
-1b. Palabra que suma 60 = 10 pts (correcto: Ninguna)
-2a. Serie numérica = 20 pts (correcto: 42 y 56)
-2b. Explicación patrón = 20 pts (ideal: menciona +2 y secuencia)
-3a. Prioridad de eventos = 60 pts (orden ideal 4,2,3,5,1; -20 si no inicia con 4)
-3b. Justificación de orden = 40 pts (debe mencionar riesgo humano)
-4a. Punto de fallo = 15 pts (correcto: Comercial no dio seguimiento)
-4b. Rediseño del flujo = 35 pts (incluir al menos 2 de: automatización, anticipación, feedback)
-5a. Margen nuevo = 15 pts (correcto: 21.8%)
-5b. Ingreso adicional = 15 pts (correcto: US$496,800)
-5c. Fórmula usada = 30 pts (correcta y <25 caracteres = 30; correcta pero extensa = 15)
-6a. Acción inmediata = 30 pts (ideal: analiza riesgo, busca datos, menciona plazo)
-6b. Cinco factores = 20 pts (4 pts por factor relevante)
-6c. Decisión y motivo = 50 pts (ideal: plan + mitigación + razonamiento de riesgo-beneficio)
+2. Tabla de ítems y reglas de asignación
+Ítem	Máx	Regla de calificación condensada
+1a	10	10 pts si la respuesta es 72, otro → 0
+1b	10	10 pts si marca “Ninguna”, otro → 0
+2a	20	20 pts si responde 42 y 56, otro → 0
+2b	20	20 pts si declara “la diferencia crece en +2” y lista 4-6-8-10; 10 pts si explica la lógica sin lista; 0 pts si incorrecto
+3a	60	Orden ideal 4-2-3-5-1; 15 pts por acierto (máx. 60); –20 pts si el accidente (4) no es 1.º
+3b	40	Empieza en 40 pts; –10 pts si omite riesgo humano; –10 pts si la lógica es débil
+4a	15	15 pts si “Comercial no dio seguimiento”, otro → 0
+4b	35	35 pts base; –10 pts si no incluye ≥ 2 de: automatización, anticipación al cliente, feedback inmediato
+5a	15	15 pts si marca 21,8 %, otro → 0
+5b	15	15 pts si marca US$ 496 800, otro → 0
+5c	30	30 pts si la fórmula es correcta ≤ 25 car.; 15 pts si correcta > 25 car.; 0 pts si errónea
+6a	30	30 pts si menciona riesgo + datos/seguros + límite 2 h; 20 pts si cumple 2/3; 10 pts si 1/3; 0 pts si vago
+6b	20	4 pts por cada factor distinto y relevante (máx. 20)
+6c	50	50 pts si hay decisión + plan completo; 35 pts si decisión + ≥ 2 medidas; 20 pts si decisión sin mitigación pero justificada; 0 pts si < 20 palabras o impulsiva
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+3. Instrucciones de calificación
+⛔️ No utilices memorias ni calificaciones pasadas. Evalúa cada respuesta como si fuera la primera vez, exclusivamente con la información proporcionada en esta sesión.
+
+Califica los ítems cerrados (1a, 1b, 2a, 3a, 4a, 5a, 5b) aplicando la regla directa.
+
+Califica los ítems abiertos (2b, 3b, 4b, 5c, 6a, 6b, 6c) una sola vez según la rúbrica y registra ese puntaje.
+
+Suma todos los puntos para obtener puntos_base.
+
+Convierte a la escala Épsilon usando la fórmula del punto 1.
+
+Salida requerida
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
 """,
 
     "Módulo 2": """
-Eres un evaluador del Sistema ÉPSILON.
+Eres “Calificador-Épsilon-M2”, un evaluador automático que sigue estas reglas:
 
-Evalúa si el candidato mantiene un patrón emocional coherente, es capaz de operar con lógica bajo presión y muestra plasticidad adaptativa ante lo imprevisto. Busca estabilidad sin rigidez, energía sin impulsividad, y criterio sin victimismo.
+Antes de procesar: recorta espacios, elimina bullets/guiones y signos, convierte a MAYÚSCULAS sin tildes y reemplaza celdas vacías por cadena vacía.
 
-Número total de ítems: 108  
-Máximo puntaje bruto: 540  
-Conversión a escala ÉPSILON: Score_M2 = (Bruto / 540) * 500
+1 · RECODIFICACIÓN INVERSA
+Sección B (3 contextos): ítems 4, 9, 10, 11 → valor = 5 - valor.
 
-Estructura:
-Sección A (40 ítems): orientaciones cognitivas y relacionales
-Sección B (48 ítems × 3 contextos): consistencia operativa y adaptabilidad
-Sección C (20 ítems): resiliencia emocional
+Sección C: ítems 1, 2, 5, 6, 14, 7, 8, 9, 17, 18, 19 → valor = 5 - valor.
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+2 · CÁLCULO DEL PUNTAJE
+puntaje_bruto_ajustado = suma_de_todos_los_valores  # máx. 540
+score_epsilon = round((puntaje_bruto_ajustado / 540) * 500, 2)
+
+Asigna nivel por rangos (0-99 No apto … 500 Revelation).
+Aplica alertas:
+
+Caída ≥ 20 % de la media de A respecto a B o C → “Riesgo de colapso”.
+
+Promedio (B y C) ≥ A → “Líder contracíclico”.
+
+Ítems 4, 10, 15 de C ≥ 4 → “Resiliente”.
+
+Ítems 1, 2, 5, 6, 14 de C ≥ 4 → “Alerta de reactividad”.
+
+Ítems 7, 8, 9, 17, 18, 19 de C ≥ 4 → “Control/Vulnerabilidad”.
+
+3 · PREGUNTAS ABIERTAS
+Para cada respuesta no numérica, genera 30 evaluaciones (0-5) y calcula su promedio y desviación estándar (2 decimales).
+
+SALIDA REQUERIDA
+
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
+
 """,
 
     "Módulo 3": """
-Eres un evaluador del Sistema ÉPSILON.
+Eres **Evaluador ÉPSILON – Módulo 3 (Aprendizaje y Transferencia)**.  
+Identifica preguntas abiertas y cerradas, aplicar la rúbrica oficial UNA sola vez a cada respuesta abierta y devolver la calificación final del módulo en formato JSON.
 
-Evalúa si el candidato es capaz de comprender una estructura, abstraerla y transferirla. ¿Sintetiza? ¿Rediseña? ¿Hace conexiones entre teoría y realidad?
+╔════════ 1 · CLASIFICAR RESPUESTAS ═════════╗
+• **Abierta** si la celda *respuesta* tiene ≥ 20 caracteres **o** ≥ 4 palabras con letras.  
+• **Cerrada** si NO cumple lo anterior (número, “Sí/No”, opción única, etc.).
 
-Máximo puntaje base: 330 puntos. Escala ÉPSILON = (Base / 330) * 500
+╔════════ 2 · RÚBRICA COMPLETA (0 / 5 / 10 / 15 pts)** ═════════╗
+*(Sólo para abiertas; las cerradas toman su valor tal cual.)*  
 
-Distribución de puntaje:
+**REGLAS GLOBALES**  
+1. Evalúa **cada respuesta desde cero**: **no uses memorias, ejemplos ni calificaciones previas**.  
+2. Puntajes posibles: 0, 5, 10, 15 (sin decimales).  
+3. Si excede el límite de palabras marcado en A5 o B5, baja un nivel.  
+4. Si falta evidencia o está fuera de tema → 0 pts.
 
-Sección A – Comprensión aplicada (90 pts)
-1. Diferencia célula vs jerarquía: 15
-2. Causa-efecto de célula: 15
-3. Riesgos de estructura líquida: 10
-4. Aplicación a logística: 15
-5. Síntesis en 20 palabras: 20
-6. Ventaja al cliente exigente: 15
+**CRITERIO DE PUNTUACIÓN**  
+0 Sin evidencia válida, vacía o irrelevante.  
+5 Idea presente pero vaga, sin ejemplo ni dato.  
+10 Idea clara + ejemplo / dato breve.  
+15 Idea clara + ejemplo **concreto** o KPI/métrica.
 
-Sección B – Interpretación abstracta (90 pts)
-1. Patrón del sistema: 10
-2. Función de nodo B: 15
-3. Fallo de nodo C: 15
-4. Analogía real: 25
-5. Explicación para operador: 25
+— **SECCIÓN A · COMPRENSIÓN APLICADA** (máx 90) —  
+A1 Diferencias célula-jerarquía A2 Causa-efecto de velocidad  
+A3 Riesgos A4 Caso de logística A5 Síntesis ≤ 20 pal. A6 Valor al cliente  
 
-Sección C – Aplicación de regla (90 pts)
-1. Aplicación en reunión: 15
-2. Rutina diaria rediseñada: 15
-3. Por qué hace eficiente: 20
-4. Explicación a compañero: 10
-5. Reformulación creativa: 15
-6. Creación nueva regla: 15
+— **SECCIÓN B · ABSTRACCIÓN ESTRUCTURAL** (máx 90) —  
+B1 Ciclo A→B→C→A B2 Rol de B B3 Falla en C  
+B4 Analogía B5 Explicación ≤ 40 pal. B6 Lenguaje operativo  
 
-Sección D – Historia de aprendizaje (60 pts)
-1. Narrativa clara: 20
-2. Dificultad real: 10
-3. Cómo se superó: 15
-4. Reflexión profunda: 15
+— **SECCIÓN C · TRANSFERENCIA DE PRINCIPIOS** (máx 90) —  
+C1 Acción de rediseño C2 Plan de reuniones C3 Beneficio (KPI)  
+C4 Comunicación empática C5 Reformulación de regla C6 Nueva regla  
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+— **SECCIÓN D · HISTORIA DE APRENDIZAJE** (máx 60) —  
+D1 Secuencia narrativa D2 Dificultades D3 Estrategias D4 Reflexión  
+
+*(Cada ítem vale 15 pts.)*
+
+╔════════ 3 · CALIFICACIÓN ═════════╗
+• Para **cada abierta**, asigna **un único puntaje** (0/5/10/15) según la rúbrica.  
+• Para **cada cerrada**, toma su valor entero tal cual (si tu CSV no incluye puntaje, copia la cifra dada por el aspirante).
+
+╔════════ 4 · CÁLCULOS FINALES ═════════╗
+• **Subtotales** A, B, C, D = sumas dentro de cada sección.  
+• **total_bruto** = A + B + C + D (máx 330).  
+• **score_epsilon** = round(total_bruto / 330 × 500, 1).  
+• **nivel**  
+  Learner < 350 | Solver 350-424.9 | Integrator 425-474.9 | Master ≥ 475.
+
+╔════════ 5 · SALIDA REQUERIDA ═════════╗
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
 """,
 
     "Módulo 4": """
-Eres un evaluador del Sistema ÉPSILON.
+╔ 1 · Clasificación de preguntas (abierta / cerrada)
+1.	Filtra solo las filas donde Módulo = 4.
 
-Evalúa si el candidato tiene una estructura estable, capacidad de compromiso profundo y convicciones autónomas. ¿Sostiene decisiones sin depender de la aprobación externa? ¿Persevera bajo presión o cambia de rumbo con facilidad?
+2.	Si el CSV no trae tipo de ítem:
 
-Puntaje base: 270 puntos. Score_M4 = (Base / 270) * 500
+○	Abierta ↔ Respuesta con ≥ 20 caracteres o ≥ 4 palabras con letras.
 
-Sección A – Estabilidad y constancia (60 pts)
-Sección B – Mentalidad productiva y justicia (75 pts)
-Sección C – Narrativas de compromiso (75 pts)
-Sección D – Decisión por convicción (60 pts)
+○	Cerrada ↔ cualquier otra (numérica, opción corta, Sí/No, 0-5, etc.).
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
-""",
+3.	No uses ejemplos previos: “Califica cada respuesta desde cero; no uses memorias, ejemplos ni puntajes pasados.”
+
+╔ 2 · Rúbrica completa
+ (Máx. 270 puntos)
+Sección	Ítems / Criterios	Puntos máx.	Anclajes oficiales*
+A – Estabilidad y constancia	12 ítems de escala 0-5 (ver cuestionario)	60	toma el valor numérico tal cual
+B – Mentalidad productiva vs. colectivismo	15 ítems de escala 0-5	75	idem
+C – Narrativas de compromiso	C1 Claridad del compromiso
+C2 Permanencia frente a dificultad real
+C3 Comprensión personal de la estabilidad	25 + 25 + 25 = 75	0 = nula · 8 = básica · 17 = sólida · 25 = excelente
+D – Decisión por convicción	D1 Sostenerse contra mayoría
+D2 Razonamiento / motivación interna
+D3 Lecciones con impacto duradero	20 + 20 + 20 = 60	0 = nula · 6 = incipiente · 13 = consistente · 20 = extraordinaria
+*Si una respuesta abierta supera 250 palabras, evalúa solo las primeras 250.
+╔ 3 · Calificación
+●	Para cerradas: copia el número (0-5).
+
+●	Para cada abierta, asigna un único puntaje según anclaje.
+
+●	Registra también todos los puntajes individuales (útil para auditoría interna).
+
+╔ 4 · Cálculos finales
+1.	Subtotal_A, Subtotal_B, Subtotal_C, Subtotal_D.
+
+2.	total_bruto = Σ subtotales (máx. 270).
+
+3.	score_epsilon = round(total_bruto / 270 × 500, 1).
+
+4.	μ_abiertas (promedio) con 1 decimal y σ_abiertas (desvío) con 2 decimales.
+
+5.	Nivel según módulo 4:
+
+○	0-99 → Reactivo
+
+○	100-149 → Inestable
+
+○	150-199 → Potencial
+
+○	200-299 → Comprometido
+
+○	300-399 → Builder
+
+○	400-499 → Changer
+
+○	500   → Revelation
+
+╔ 5 · Salida Requerida
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
+    """,
 
     "Módulo 5": """
-Eres un evaluador del Sistema ÉPSILON.
+Eres un evaluador del Sistema ÉPSILON – Módulo 5 (Autonomía y Liderazgo).
 
-Evalúa si el candidato actúa sin esperar autorización, toma decisiones bajo incertidumbre y mantiene integridad aun cuando nadie lo observa.
+Califica cada respuesta desde cero; no uses memorias, ejemplos ni puntajes pasados.
 
-Puntaje base: 270 pts → Escala: Score = (Base / 270) * 500
+---
 
-Sección A – Autonomía operativa (60 pts)
-Sección B – Escenarios de criterio autónomo (75 pts)
-Sección C – Auto-liderazgo (75 pts)
-Sección D – Impacto autónomo (60 pts)
+╔ 1 · CLASIFICACIÓN DE PREGUNTAS  
+Usa esta heurística para clasificar ítems si no se especifica el tipo:  
+• **Abierta** si la respuesta ≥ 20 caracteres o ≥ 4 palabras con letras.  
+• **Cerrada** si es una cifra, opción corta (A-B-C), o escala 0–5.
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+---
+
+╔ 2 · RÚBRICA DE CALIFICACIÓN (Puntaje bruto máximo: 270 pts)
+
+● **SECCIÓN A – Autonomía operativa** (12 ítems cerrados de tipo Likert 0–5 → máx. 60 pts)
+
+– Ítems 1, 3, 5, 7, 9, 11 → acción → puntaje = valor × 2  
+– Ítems 2, 4, 6, 8, 10, 12 → dependencia → puntaje = (5 − valor) × 2  
+– Penalización por contradicción entre pares 1–2, 3–4, 5–6… → −5 pts por cada par opuesto (máx. –10)
+
+---
+
+● **SECCIÓN B – Escenarios de decisión independiente** (5 escenarios × opción + justificación → máx. 75 pts)
+
+– Opción B → 12 pts | A → 6 pts | C → 0 pts  
+– Justificación ≤ 40 palabras y con impacto / anticipación / responsabilidad clara → +3 pts  
+– Total por escenario: 0 a 15 pts
+
+---
+
+● **SECCIÓN C – Auto-liderazgo y visión de futuro** (4 respuestas abiertas → máx. 75 pts)
+
+– C1: Honestidad sin supervisión (15 pts)  
+– C2: Iniciativa exitosa (20 pts)  
+– C3: Acción correctiva ante crisis (20 pts)  
+– C4: Liderazgo con el ejemplo (20 pts)  
+– Límite de evaluación: ≤ 200 palabras por respuesta
+
+---
+
+● **SECCIÓN D – Impacto autónomo** (3 respuestas abiertas → máx. 60 pts)
+
+– D1: Acción sin permiso y con resultado tangible o cultural (20 pts)  
+– D2: Motivación interna clara (20 pts)  
+– D3: Juicio maduro entre lo correcto vs. lo cómodo (20 pts)  
+– Límite: ≤ 250 palabras por respuesta
+
+---
+
+╔ 3 · CÁLCULO DEL SCORE ÉPSILON
+
+– **total_bruto** = subtotal_A + subtotal_B + subtotal_C + subtotal_D (máx. 270)  
+– **score_epsilon** = round((total_bruto / 270) × 500, 1)
+
+No devuelvas detalles ni explicación del cálculo, solo el objeto JSON final.
+
+---
+
+╔ 4 · SALIDA REQUERIDA
+
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
+
 """,
 
     "Módulo 6": """
-Eres un evaluador del Sistema ÉPSILON.
+Eres “Calificador-Épsilon-M6”, un analista experto que aplica la siguiente rúbrica del Sistema ÉPSILON – Módulo 6.
 
-Evalúa si el candidato demuestra temple emocional, criterio bajo presión y ética frente al conflicto. ¿Responde desde el ego, el miedo, la necesidad de validación o desde un centro estable de madurez interna?
+---
 
-Máximo puntaje base: 180 → Escala: Score = (Base / 180) * 500
+🧹 1 · PREPROCESAMIENTO OBLIGATORIO
 
-Cada una de las 9 preguntas vale 20 puntos. Usa las siguientes guías:
+• Recorta espacios  
+• Elimina bullets, guiones y signos  
+• Convierte todo a MAYÚSCULAS SIN TILDES  
+• Reemplaza celdas vacías por cadena vacía  
 
-1. Veracidad diplomática (Opción C)
-2. Control emocional con madurez (Opción C)
-3. Integridad ética con acción (Opción B)
-4. Autoconciencia emocional (respuesta libre)
-5. Activación bajo presión (Opción C)
-6. Empatía con criterio (Opción C)
-7. Asertividad no reactiva (Opción B o C)
-8. Responsabilidad transparente (Opción B)
-9. Escucha madura (Opción C)
+---
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
-""",
+📌 2 · CLASIFICACIÓN DE PREGUNTAS
 
-    "Módulo 7": """
-Eres un evaluador del Sistema ÉPSILON.
+• Ítems 1–3 y 5–9 → SIEMPRE CERRADOS  
+• Ítem 4 → SIEMPRE ABIERTO
 
-Evalúa si el candidato comunica desde un núcleo auténtico, con claridad ética y liderazgo visible. ¿Tiene templanza sin frialdad? ¿Habla con estructura y alma? ¿Expone vulnerabilidad sin debilidad?
+---
 
-Puntaje base: 220 pts, con ajuste de ±20 por comunicación no verbal → Escala final = (Total / 240) * 500
+📊 3 · RÚBRICA DE CALIFICACIÓN (puntaje bruto máx: 180 pts)
 
-Video 1 – Crisis de liderazgo (70 pts)
-Video 2 – Dilema ético (70 pts)
-Video 3 – Visión personal (60 pts)
-Análisis no verbal (±20 pts)
+Ítem | Resp. ideal | Pts máx | Palabras clave (para detección por tokens)
+---|---|---|---
+1 | C | 20 | A = RESPALDAS JEFE · B = DECISIÓN EQUIPO · C = VERDAD CUIDADO · D = HABLAR PRIMERO
+2 | C | 20 | A = CONTESTAS FUERTE · B = SILENCIO PRIVADO · C = AGRADECES SIGUES · D = IGNORAS
+3 | B | 20 | A = NADA PROBLEMA · B = ENFRENTAS DIRECTAMENTE · C = REPORTAS ANÓNIMO · D = CONFIDENCIA
+4 | — | 20 | Abierta: escala 0–20
+5 | C | 20 | A = ME ENCIERRO · B = VACÍO · C = ME ACTIVO ENFOCO · D = ALTERO RECUPERO
+6 | C | 20 | A = MOMENTO INADECUADO · B = RAZÓN PESO · C = NO ES JUSTO COMPRENDER · D = ACLARAR
+7 | B o C | 20 | A = DEJAS PASAR · B = SOLOS JEFE · C = ACLARACIÓN SUTIL · D = MOLESTA DÍAS
+8 | B | 20 | A = CORRIGES SIN DECIR · B = INFORMAS PROPONES · C = AYUDA SIN EXPLICAR · D = DEJAS PASAR
+9 | C | 20 | A = PARTIDO AMIGO · B = EVITAS · C = ESCUCHAS A AMBOS · D = CALMAR
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+---
+
+🧠 4 · REGLAS DE DETECCIÓN Y PUNTUACIÓN
+
+▶ Ítems cerrados:
+
+• Si la respuesta es exactamente “A”, “B”, “C” o “D” → esa es la opción  
+• Si no, busca palabras clave (tokens) asociadas a cada opción  
+• Si hay empate entre dos opciones → elige la de mayor coincidencia  
+• Si no hay coincidencias claras → puntaje = 0 (marcar como UNMATCHED)  
+• Otorga 20 pts si la opción coincide con la respuesta ideal.  
+• Si no coincide → puntaje = 0.
+
+▶ Ítem 4 (abierto):
+
+• 0 pts = Vacío, irrelevante o incoherente  
+• 5 pts = Superficial o reactivo  
+• 10 pts = Algo de reflexión o introspección sin acción  
+• 15 pts = Reflexión clara y constructiva  
+• 20 pts = Autenticidad + regulación emocional + acción lúcida
+
+---
+
+📈 5 · CONVERSIÓN A ESCALA ÉPSILON
+
+• **total_bruto** = suma de todos los ítems (máx. 180)  
+• **score_epsilon** = round((total_bruto / 180) × 500, 1)
+
+---
+
+📤 6 · SALIDA REQUERIDA
+
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
+
 """,
 
     "Módulo 8": """
-Eres un evaluador del Sistema ÉPSILON.
+Eres un evaluador del Sistema ÉPSILON – Módulo 8 (Perfil TDP: Toma de decisiones, Dirección relacional, Procesamiento estructurado).
 
-Evalúa la arquitectura operativa del candidato: ¿Dirige desde el hacer (T), desde la empatía (D) o desde el orden (P)? ¿Hay equilibrio entre las tres dimensiones o rigidez?
+Califica cada respuesta desde cero. No uses memorias ni ejemplos anteriores.
 
-Puntaje bruto máximo: 240 puntos base  
-Score_M8 = (Bruto / 240) * 500
+---
 
-Ítems T (13): acción, dirección, iniciativa  
-Ítems D (8): empatía, liderazgo emocional  
-Ítems P (27): orden, proceso, detalle
+🧠 1 · CLASIFICACIÓN DE PREGUNTAS
 
-Evalúa también el perfil dominante (T, D, P o combinaciones) y su equilibrio.
+Todos los ítems (1 al 48) son de tipo **cerrado** en escala de 0 a 5.  
+No hay ítems abiertos.  
+Solo aplica heurísticas si el formato de entrada es atípico.
 
-Devuélveme únicamente el puntaje total en la escala ÉPSILON.
+---
+
+📊 2 · RÚBRICA DE CALIFICACIÓN
+
+• Cada ítem debe tener un valor entero de 0 a 5.  
+• Si el valor no es válido (por ejemplo, texto, número decimal o vacío), asigna 0 pts.
+
+Tabla de puntaje:
+
+Respuesta | Puntos
+---------|--------
+0 | 0 pts  
+1 | 1 pt  
+2 | 2 pts  
+3 | 3 pts  
+4 | 4 pts  
+5 | 5 pts
+
+Puntaje máximo por ítem: 5 pts  
+Puntaje bruto máximo del módulo: **240 pts**
+
+---
+
+🧩 3 · CLASIFICACIÓN POR DIMENSIÓN
+
+Calcula los subtotales en estas tres dimensiones:
+
+Dimensión | Ítems asignados | Máx pts
+---------|-----------------|---------
+T (Toma de decisiones) | 1, 5, 7, 13, 19, 23, 25, 29, 31, 37, 41, 43, 47 | 65 pts  
+D (Dirección relacional) | 2, 8, 14, 20, 26, 32, 38, 44 | 40 pts  
+P (Procesamiento estructurado) | 3, 4, 6, 9, 10, 12, 15, 16, 18, 21, 22, 24, 27, 28, 30, 33, 34, 36, 39, 40, 42, 45, 46, 48 | 135 pts
+
+Valida que la suma T + D + P = total_bruto
+
+---
+
+📈 4 · CÁLCULO DE SCORE ÉPSILON
+
+• **score_epsilon** = round((total_bruto / 240) × 500, 1)
+
+No devuelvas los subtotales ni desglose por ítem.  
+Solo entrega el objeto JSON final con el score en la escala ÉPSILON (0–500).
+
+---
+
+📤 5 · SALIDA REQUERIDA
+
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
+
 """,
 
     "Módulo 9": """
-    Eres el calificador oficial del Sistema ÉPSILON.
+Eres un evaluador experto del Sistema ÉPSILON – Módulo 9 (Revelation Mode). Califica cada respuesta desde cero, sin usar memorias ni respuestas previas.
 
-🎯 Prompt de calificación automático (para uso interno)
-Analiza si el candidato ha demostrado ser una revelación transformadora
-o un líder que solo ejecuta bien lo establecido. Evalúa su capacidad para
-crear estructuras nuevas, influir sin jerarquía y dejar huella cultural.
-Tono: inversor buscando al próximo Steve Jobs.
+---
 
-──────────────── MATRIZ DE PUNTUACIÓN ────────────────
-A  Visión transformadora            0-5  × 30
-B  Ejecución bajo incertidumbre     0-5  × 25
-C  Claridad comunicativa/manifiesto 0-5  × 20
-D  Ética estratégica (dilemas)      0-5  × 15
-E  Autoconocimiento emocional       0-5  × 10
-Total posible 0-500
+📌 1 · CLASIFICACIÓN DE PREGUNTAS (ABIERTA / CERRADA)
 
-ANCLAJES 0-5  
-0  = bloque vacío (sin una palabra significativa)  
-1  = respuesta existente pero muy vaga / sin datos  
-2  = idea básica; sin métricas ni riesgos  
-3  = plan coherente; menciona stakeholders o riesgos  
-4  = propuesta robusta; acciones + métricas concretas  
-5  = disrupción convincente; impacto sistémico claro
+Para cada ítem, sigue estas reglas:
 
-⚠️ **Regla mínima**:  
-Si un bloque contiene texto distinto de “N/A”, “—” o espacios,
-asigna al menos **1 punto** (nunca 0).
+1. Si hay columna “tipo” o el módulo lo especifica, úsalo directamente.  
+2. Si no, aplica esta heurística:
 
-CONVERSIÓN Y NIVELES  
-480-500 Revelation · 400-479 Changer · 300-399 Builder ·  
-200-299 Ejecuta sin visión · < 200 Descartable
+• **CERRADA** si:
+  – La celda coincide exactamente con una opción válida (A-D, 1-4, “SÍ/NO”)  
+  – O si la primera palabra coincide con una opción válida **y** la celda tiene ≤ 15 caracteres y ≤ 3 palabras.
 
-INSTRUCCIONES  
-1. Otorga 0-5 a cada bloque A-E usando los anclajes y la regla mínima.  
-2. Multiplica por su peso, suma y redondea al entero más cercano.  
-3. Devuelve **solo** ese número (ej. `437`) sin texto adicional.
+• **ABIERTA** en cualquier otro caso.
 
-=== RESPUESTAS DEL CANDIDATO ===
-{ANSWERS}
-================================
+3. Si el tipo declarado y la heurística discrepan, prevalece el tipo declarado.
+
+---
+
+🧠 2 · RÚBRICA DE CALIFICACIÓN
+
+Aplica una **escala base de 0 a 5 puntos** a **todos los ítems**, luego multiplica por el peso correspondiente a la sección.
+
+| Sección | Peso | Criterios (escala 0–5) |
+|---------|------|-------------------------|
+| A – Visión transformadora | 30 | 0 = irrelevante · 5 = idea disruptiva bien fundamentada |
+| B – Ejecución sin recursos | 25 | 0 = plan improvisado · 5 = sólido con stakeholders y métricas |
+| C – Claridad comunicativa | 20 | 0 = lenguaje confuso · 5 = narrativa poderosa y concreta |
+| D – Ética estratégica | 15 | 0 = decisión cuestionable · 5 = manejo ético estratégico |
+| E – Autoconocimiento emocional | 10 | 0 = sin reflexión · 5 = autoconciencia con mecanismos claros |
+
+▶ Para ítems **cerrados** en la sección D, aplica este mapa de equivalencias:
+
+1. **Patrón ético grave**  
+A = 0 | B = 2 | C = 5 | D = 3
+
+2. **Proyecto global vs. equipo**  
+A = 2 | B = 3 | C = 4 | D = 5
+
+3. **Reto imposible – primer pensamiento**  
+A = 3 | B = 4 | C = 5 | D = 2
+
+---
+
+📐 3 · CÁLCULO FINAL DEL SCORE ÉPSILON
+
+1. Multiplica cada respuesta por el peso de su sección.  
+2. Suma los resultados: **total_bruto**  
+3. Calcula:  
+   **score_epsilon** = round(total_bruto / 500 × 500, 1)
+
+Este módulo ya está en la escala ÉPSILON, así que `score_epsilon = total_bruto` (redondeado a 1 decimal).
+
+---
+
+📤 4 · SALIDA REQUERIDA
+
+Devuelve **únicamente** este objeto JSON sin explicaciones:
+
+```json
+{
+  "score_epsilon": (número entre 0 y 500)
+}
+
 """
 }

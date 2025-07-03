@@ -6,6 +6,7 @@ y conservar las columnas que identifican al participante.
 from __future__ import annotations
 import re
 import pandas as pd
+from typing import List
 
 # Personaliza esta lista si tus identificadores cambian
 ID_COLS = ["Email Address", "Full Name"]
@@ -19,16 +20,25 @@ def detect_module_from_sheet(sheet_name: str) -> str | None:
 def extract_answers_by_module(
     df: pd.DataFrame,
     module_code: str,
-    id_cols: list[str] = ID_COLS,
+    id_cols: List[str] = ID_COLS,
 ) -> pd.DataFrame:
     """
-    Devuelve únicamente:
-      • columnas que comienzan con el prefijo del módulo (MOD1_, MOD2_, …)
-      • + columnas de identidad definidas en ID_COLS (si existen en la hoja)
+    Devuelve:
+      · columnas propias del módulo (MOD9_, EPS9A_, EPS9R_, …)
+      · columnas de identidad presentes (Email Address, Full Name, etc.).
     """
-    prefix = module_code.split()[0].upper().replace("Ó", "O").replace(" ", "")
-    mod_cols = [c for c in df.columns if c.strip().startswith(prefix)]
+    # «Módulo 9» → 9   ·  «Módulo 9R» → 9R
+    num = re.search(r"\d+[R]?", module_code, flags=re.I).group(0)
+
+    # Acepta MOD… o EPS…, con letras opcionales tras el número (A, B, R…)
+    prefix_re = re.compile(
+        rf"^\s*(?:MOD|EPS)\s*{num.rstrip('R')}[A-Z]*\s*[_\-\u2013\u2014\s]",
+        flags=re.I,
+    )
+
+    mod_cols   = [c for c in df.columns if prefix_re.match(c)]
     ident_cols = [c for c in id_cols if c in df.columns]
+
     return df[ident_cols + mod_cols].copy()
 
 

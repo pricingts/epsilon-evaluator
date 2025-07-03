@@ -93,12 +93,12 @@ def run_pipeline(
         grouped["Categoría_ÉPSILON"] = grouped["Promedio_Final"].apply(classify)
 
         print("🧠  Generando perfiles GPT…")
-        grouped["Perfil_Sugerido"] = grouped.apply(get_profile_paragraph, axis=1)
+        #grouped["Perfil_Sugerido"] = grouped.apply(get_profile_paragraph, axis=1)
 
         ordered_cols = (
             ["Email Address", "Full Name"]
             + mod_cols
-            + ["Promedio_Final", "Categoría_ÉPSILON", "Perfil_Sugerido"]
+            + ["Promedio_Final", "Categoría_ÉPSILON"]
         )
 
         grouped[ordered_cols].to_excel(writer, sheet_name="Resumen", index=False)

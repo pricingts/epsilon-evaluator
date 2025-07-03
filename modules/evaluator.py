@@ -6,6 +6,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 import pandas as pd
 import numpy as np
 from tqdm.auto import tqdm 
+import time
+import json
 
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -22,34 +24,41 @@ def build_prompt(module_name: str, rubric_text: str, answers: dict) -> str:
     )
 
 
-def call_openai_and_parse_score(prompt: str) -> float:
-    """Envía prompt y devuelve el primer número que encuentre en la respuesta."""
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0.7,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Piensa paso a paso internamente, "
-                        "pero responde con **solo** el puntaje numérico."
-                    ),
-                },
-                {"role": "user", "content": prompt},
-            ],
-        )
-        text = response.choices[0].message.content.strip()
-    except Exception as err:
-        print("❌ Error en llamada a OpenAI:", err)
-        return np.nan
-
-    for tok in text.replace(",", ".").split():
+def call_openai_and_parse_score(prompt: str, max_retries: int = 3, delay: float = 2.0) -> float:
+    """
+    Llama al modelo GPT y extrae solo el score_epsilon.
+    Si falla, reintenta hasta max_retries veces. Si todos fallan, devuelve np.nan.
+    """
+    for attempt in range(1, max_retries + 1):
         try:
-            return float(tok)
-        except ValueError:
-            continue
-    print("⚠️  No se detectó número en:", text)
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                temperature=0,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Piensa paso a paso internamente, pero responde con un JSON válido con una clave: score_epsilon."
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"} 
+            )
+
+            result = response.choices[0].message.content.strip()
+
+            data = json.loads(result)
+
+            score = data.get("score_epsilon", None)
+
+            if isinstance(score, (int, float)):
+                return float(score)
+
+        except Exception as err:
+            print(f"⚠️ Intento {attempt}/{max_retries} fallido: {err}")
+
+        time.sleep(delay)
+
+    print("⚠️ No se pudo obtener score válido tras varios intentos.")
     return np.nan
 
 def evaluate_module_batch(
